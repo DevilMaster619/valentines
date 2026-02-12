@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine? 💕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #8bddf2 0%, #67cfe9 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 60px 80px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .emojis {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 40px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 60px;
+        }
+
+        button {
+            padding: 16px 48px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #46abdd 0%, #33a2da 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(107, 137, 255, 0.4);
+        }
+
+        .yes-btn:hover {
+            box-shadow: 0 6px 20px rgba(107, 137, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .no-btn {
+            background: #e8e8e8;
+            color: #666;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: none;
+        }
+        
+        .no-btn.moving {
+            position: fixed;
+        }
+
+        .bottom-text {
+            font-size: 14px;
+            color: #999;
+            opacity: 0;
+            transition: opacity 0.3s;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .bottom-text.show {
+            opacity: 1;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            position: fixed; bottom: 10px; width: 100%;
+        }
+
+        /* Popup styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup.show {
+            display: flex;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 50px 60px;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: popupAppear 0.3s ease-out;
+        }
+
+        @keyframes popupAppear {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .popup-content .emojis {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .popup-content h2 {
+            font-size: 48px;
+            color: #46abdd;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .popup-content p {
+            font-size: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emojis">🐱💗</div>
+        <h1>Mrs. Radiyah Nashrah Ahona</h1>
+        <div class="question">Will you be my Valentine?</div>
+        
+        <div class="buttons">
+            <button class="yes-btn" onclick="handleYes()">Yes</button>
+            <button class="no-btn" id="noBtn" onmouseover="moveButton()">No</button>
+        </div>
+        
+        <div class="bottom-text" id="bottomText">
+            "No" was never an option 😈
+        </div>
+        
+        
+    </div>
+
+    <div class="footer">
+        developed by Shihad Loyal Showkat 💕
+    </div>
+
+    <!-- Popup -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <div class="emojis">🎉💕🥳</div>
+            <h2>Yaayy!!</h2>
+            <p>I knew you'd say yes! 💖</p>
+        </div>
+    </div>
+
+    <script>
+        let hoverCount = 0;
+        const noBtn = document.getElementById('noBtn');
+        const bottomText = document.getElementById('bottomText');
+        const popup = document.getElementById('popup');
+
+        function moveButton() {
+            hoverCount++;
+            
+            // Show bottom text on first hover
+            if (hoverCount === 1) {
+                bottomText.classList.add('show');
+            }
+
+            // Add moving class to switch to fixed positioning
+            noBtn.classList.add('moving');
+
+            // Get button dimensions
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // Get container dimensions
+            const container = document.querySelector('.buttons');
+            const containerRect = container.getBoundingClientRect();
+
+            // Calculate safe boundaries (keeping button within viewport)
+            const maxX = window.innerWidth - btnWidth - 40;
+            const maxY = window.innerHeight - btnHeight - 40;
+            const minX = 20;
+            const minY = 20;
+
+            // Generate random position
+            const randomX = Math.random() * (maxX - minX) + minX;
+            const randomY = Math.random() * (maxY - minY) + minY;
+
+            // Apply new position
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function handleYes() {
+            popup.classList.add('show');
+            
+            // Optional: Click anywhere to close popup
+            popup.addEventListener('click', function() {
+                popup.classList.remove('show');
+            });
+        }
+    </script>
+</body>
+</html>
